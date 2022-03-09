@@ -1,4 +1,3 @@
-import kotlin.math.exp
 import kotlin.math.pow
 
 class Calculator {
@@ -123,10 +122,10 @@ class Calculator {
                         Sign.POSITIVE -> 1
                     }
 
-                    if (inDecimalMode)
-                        signMultiplier = sign
-                    else if (inExponentMode)
+                    if (inExponentMode)
                         exponentSignMultiplier = sign
+                    else
+                        signMultiplier = sign
                 }
 
                 Symbol.EXPONENT -> {
@@ -151,8 +150,6 @@ class Calculator {
         result = preDecimal + postDecimal
         result = result.pow(exponent)
         result *= signMultiplier
-
-        println(result)
 
         return result
     }
