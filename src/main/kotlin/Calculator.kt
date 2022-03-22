@@ -41,6 +41,7 @@ class Calculator {
             fun singleSymbol(input: String) = when (input) {
                 "." -> Symbol.DECIMAL
                 "E" -> Symbol.EXPONENT
+                "e" -> Symbol.EXPONENT
                 else -> throw NumberFormatException()
             }
 
@@ -59,6 +60,7 @@ class Calculator {
                 "+" -> Symbol.SIGN
                 "." -> Symbol.DECIMAL
                 "E" -> Symbol.EXPONENT
+                "e" -> Symbol.EXPONENT
                 else -> throw NumberFormatException()
             }
         }
