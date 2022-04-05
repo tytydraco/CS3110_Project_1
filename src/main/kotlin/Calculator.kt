@@ -190,7 +190,6 @@ class Calculator {
     }
 
     private fun evaluateOperationPart(input: String, operation: Operation): String? {
-        // TODO: only pick one term to the left and one term to the right, not entire lhs and rhs
         val opStr = operationString(operation)
         val idx = input.indexOf(opStr)
         if (idx != -1) {
@@ -226,7 +225,7 @@ class Calculator {
 
     fun evaluateExpression(input: String): Double {
         var working = input.trim()
-        println(" ---> $working")
+        //println(" ---> $working")
 
         /*
          * Get the innermost parentheses' substring
