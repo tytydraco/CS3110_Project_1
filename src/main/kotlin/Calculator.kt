@@ -13,6 +13,22 @@ class Calculator {
         NEGATIVE
     }
 
+    enum class Operation {
+        ADD,
+        SUBTRACT,
+        MULTIPLY,
+        DIVIDE
+    }
+
+    private fun operationString(operation: Operation): String {
+        return when (operation) {
+            Operation.ADD -> "+"
+            Operation.SUBTRACT -> "-"
+            Operation.MULTIPLY -> "*"
+            Operation.DIVIDE -> "/"
+        }
+    }
+
     class Parse {
         companion object {
             /**
@@ -35,6 +51,14 @@ class Calculator {
             fun singleSign(input: String) = when (input) {
                 "-" -> Sign.NEGATIVE
                 "+" -> Sign.POSITIVE
+                else -> throw NumberFormatException()
+            }
+
+            fun singleOperation(input: String) = when (input) {
+                "+" -> Operation.ADD
+                "-" -> Operation.SUBTRACT
+                "*" -> Operation.MULTIPLY
+                "/" -> Operation.DIVIDE
                 else -> throw NumberFormatException()
             }
 
@@ -154,5 +178,95 @@ class Calculator {
         result *= signMultiplier
 
         return result
+    }
+
+    private fun compute(left: Double, right: Double, operation: Operation): Double {
+        return when (operation) {
+            Operation.ADD -> left + right
+            Operation.SUBTRACT -> left - right
+            Operation.MULTIPLY -> left * right
+            Operation.DIVIDE -> left / right
+        }
+    }
+
+    private fun evaluateOperationPart(input: String, operation: Operation): String? {
+        // TODO: only pick one term to the left and one term to the right, not entire lhs and rhs
+        val opStr = operationString(operation)
+        val idx = input.indexOf(opStr)
+        if (idx != -1) {
+            val lhs = input.substring(0, idx).trim()
+            val rhs = input.substring(idx + 1).trim()
+
+            /* No other side to operate on */
+            if (lhs.isEmpty() || rhs.isEmpty())
+                return null
+
+            val lastLhsTerm = lhs.split("*", "/", "+", "-").last()
+            val firstRhsTerm = rhs.split("*", "/", "+", "-").first()
+
+            val lhsEval = evaluateExpression(lastLhsTerm)
+            val rhsEval = evaluateExpression(firstRhsTerm)
+
+            val result = compute(lhsEval, rhsEval, operation)
+            return input.replace("$lastLhsTerm$opStr$firstRhsTerm", result.toString())
+        }
+
+        return null
+    }
+
+    private fun getBestParentheses(input: String): String? {
+        val lastOpeningBracketIdx = input.indexOfLast { it == '(' }
+        if (lastOpeningBracketIdx != -1) {
+            val firstClosingBracketIdx = input.indexOf(')', lastOpeningBracketIdx + 1)
+            return input.substring(lastOpeningBracketIdx, firstClosingBracketIdx + 1)
+        }
+
+        return null
+    }
+
+    fun evaluateExpression(input: String): Double {
+        var working = input.trim()
+        println(" ---> $working")
+
+        /*
+         * Get the innermost parentheses' substring
+         * Evaluate the expression within the parentheses
+         * Replace the substring (including parentheses) with the result of expression
+         * Evaluate again
+         */
+        getBestParentheses(working)?.let {
+            val subWithoutBrackets = it.substring(1, it.length - 1)
+
+            val evaluated = evaluateExpression(subWithoutBrackets)
+            working = working.replace(it, evaluated.toString())
+
+            return evaluateExpression(working)
+        }
+
+        /*
+         * No parentheses
+         * - Evaluate mult/div and add/sub separately
+         * - If operation exists, process it, else continue trying the others
+         * - If no operation exists, treat it as single digit
+         * Evaluate again
+         */
+
+        val nextMultDivIdx = working.indexOfAny(charArrayOf('*', '/'))
+        if (nextMultDivIdx != -1) {
+            when (working[nextMultDivIdx]) {
+                '*' -> evaluateOperationPart(working, Operation.MULTIPLY)?.let { return evaluateExpression(it) }
+                '/' -> evaluateOperationPart(working, Operation.DIVIDE)?.let { return evaluateExpression(it) }
+            }
+        }
+
+        val nextAddSubIdx = working.indexOfAny(charArrayOf('+', '-'))
+        if (nextAddSubIdx != -1) {
+            when (working[nextAddSubIdx]) {
+                '+' -> evaluateOperationPart(working, Operation.ADD)?.let { return evaluateExpression(it) }
+                '-' -> evaluateOperationPart(working, Operation.SUBTRACT)?.let { return evaluateExpression(it) }
+            }
+        }
+
+        return parseDouble(working)
     }
 }
