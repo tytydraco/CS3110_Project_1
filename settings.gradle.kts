@@ -1,3 +1,3 @@
 
-rootProject.name = "CS3110_Project_1_Calculator"
+rootProject.name = "CS3110_Project_1"
 
