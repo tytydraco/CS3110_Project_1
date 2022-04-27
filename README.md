@@ -12,4 +12,5 @@ Calculator project for Formal Languages and Automata
 - Project 2 is a PDA (`evaluateExpression`) using recursion instead of a stack. Portions are evaluated, and then the method is called again with the new information. There are a few helper methods are just regular functions to perform basic string operations.
 
 # Usage
-Run program and enter floats or arithmetic, and hit enter to process. When finished, terminate program. 
+- Download the JAR file from the releases page (runs like a regular Java program, `java -jar <path to jar>`)
+- Run program and enter floats or arithmetic, and hit enter to process. When finished, terminate program.
