@@ -2,6 +2,7 @@
 Calculator project for Formal Languages and Automata
 
 # Features
+- Written in Kotlin, which runs in the Java Virtual Machine (JVM)
 - Accepts positive and negative floating point numbers
 - Accepts scientific notation format (i.e. 2.1e4)
 - Accepts arithmetic (such as +, -, *, /, and parentheses)

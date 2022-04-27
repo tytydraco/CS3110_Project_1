@@ -1,4 +1,5 @@
 import java.text.ParseException
+import java.util.Stack
 import kotlin.math.pow
 
 class Calculator {
@@ -288,20 +289,48 @@ class Calculator {
         return null
     }
 
-    // PROJECT2
+    /**
+     * PROJECT 2
+     *
+     * Use two DFAs to find the innermost parentheses
+     * Use one PDA to store our parentheses characters
+     */
     private fun getBestParentheses(input: String): String? {
-        val lastOpeningBracketIdx = input.indexOfLast { it == '(' }
-        if (lastOpeningBracketIdx != -1) {
-            val firstClosingBracketIdx = input.indexOf(')', lastOpeningBracketIdx + 1)
-            return input.substring(lastOpeningBracketIdx, firstClosingBracketIdx + 1)
+        val stack = Stack<Char>()
+
+        // Use DFA to find last opening bracket
+        var lastOpeningBracketIdx = -1
+        for (charIdx in input.indices) {
+            if (input[charIdx] == '(')
+                lastOpeningBracketIdx = charIdx
         }
 
-        return null
+        if (lastOpeningBracketIdx == -1)
+            return null
+
+        // Use DFA to find first closing bracket after that
+        var firstClosingBracketIdx = -1
+        for (charIdx in input.indices) {
+            if (charIdx <= lastOpeningBracketIdx)
+                continue
+            if (input[charIdx] == ')')
+                firstClosingBracketIdx = charIdx
+        }
+
+        for (charIdx in lastOpeningBracketIdx until firstClosingBracketIdx + 1) {
+            stack.add(input[charIdx])
+        }
+
+        var stackToString = ""
+        stack.forEach { stackToString += it }
+
+        return stackToString
+
     }
 
     // PROJECT2
     fun evaluateExpression(input: String): Double {
-        var working = input.trim()
+        var working = input.replace(" ", "")
         //println(" ---> $working")
 
         /*
