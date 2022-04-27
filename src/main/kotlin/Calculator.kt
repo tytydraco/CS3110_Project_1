@@ -340,7 +340,9 @@ class Calculator {
          * Evaluate again
          */
         getBestParentheses(working)?.let {
-            val subWithoutBrackets = it.substring(1, it.length - 1)
+            var subWithoutBrackets = ""
+            for (charIdx in 1 until it.length - 1)
+                subWithoutBrackets += it[charIdx]
 
             val evaluated = evaluateExpression(subWithoutBrackets)
             working = working.replace(it, evaluated.toString())
@@ -355,8 +357,14 @@ class Calculator {
          * - If no operation exists, treat it as single digit
          * Evaluate again
          */
+        var nextMultDivIdx = -1
+        for (charIdx in working.indices) {
+            if (working[charIdx] == '*' || working[charIdx] == '/') {
+                nextMultDivIdx = charIdx
+                break
+            }
+        }
 
-        val nextMultDivIdx = working.indexOfAny(charArrayOf('*', '/'))
         if (nextMultDivIdx != -1) {
             when (working[nextMultDivIdx]) {
                 '*' -> evaluateOperationPart(working, Operation.MULTIPLY)?.let { return evaluateExpression(it) }
@@ -364,7 +372,14 @@ class Calculator {
             }
         }
 
-        val nextAddSubIdx = working.indexOfAny(charArrayOf('+', '-'))
+        var nextAddSubIdx = -1
+        for (charIdx in working.indices) {
+            if (working[charIdx] == '+' || working[charIdx] == '-') {
+                nextAddSubIdx = charIdx
+                break
+            }
+        }
+
         if (nextAddSubIdx != -1) {
             when (working[nextAddSubIdx]) {
                 '+' -> evaluateOperationPart(working, Operation.ADD)?.let { return evaluateExpression(it) }
